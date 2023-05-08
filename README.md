@@ -1,4 +1,5 @@
 # pb-budget
+A personal budgeting app.
 
 ## Project setup
 ```
