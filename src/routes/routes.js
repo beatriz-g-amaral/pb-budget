@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../pages/Home/HomeIndex.vue';
 import LoginPage from '../pages/Login/LoginIndex.vue';
-import FinancesList from '../pages/Finances/List/FinancesList.vue'
+import FinancesTable from '../pages/Finances/Table/FinancesTable.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,7 +19,7 @@ const router = createRouter({
     {
       path: '/finances',
       name: 'finances',
-      component: FinancesList,
+      component: FinancesTable,
     },
   ],
 });
