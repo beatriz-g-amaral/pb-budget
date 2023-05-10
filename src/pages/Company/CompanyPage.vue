@@ -1,8 +1,10 @@
 <template>
   <div>
+    <h1>Consulta de Locais</h1>
+    <SearchCompany :filterFunction="filterCompanies" />
+    <CompanyTable v-model:items="displayedCompanies" />
 
-    <CompanyCard :items="companies" />
-
+    <div>
     <button @click="showModal = true">Mostrar Modal</button>
     <BaseModal v-model:visible="showModal">
       <template v-slot:header>
@@ -12,22 +14,28 @@
         <p>Corpo do Modal</p>
       </template>
       <template v-slot:footer>
-        <button @click="showModal = false">Cancelar</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" @click="closeModal()">Fechar</button>
       </template>
     </BaseModal>
   </div>
+
+  </div>
 </template>
 
-
 <script>
+import SearchCompany from '../../components/Company/SearchCompany.vue'
+import CompanyTable from '../../components/Company/CompanyTables.vue'
 import BaseModal from '../../components/Base/BaseModal.vue'
-import CompanyCard from '../../components/Company/CompanyCard.vue'
-import axios from 'axios'
+
+import axios from 'axios';
+
 export default {
-  name: 'FinancesPage',
+  name: 'CompanyPage',
   components: {
-    BaseModal,
-    CompanyCard
+    SearchCompany,
+    CompanyTable,
+    BaseModal
   },
   data() {
     return {
@@ -38,7 +46,7 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:3000/')
+    axios.get('http://localhost:3000/company')
       .then(response => {
         this.companies = response.data;
         this.displayedCompanies = response.data;
@@ -50,7 +58,16 @@ export default {
   methods: {
     filterCompanies(company) {
       this.displayedCompanies = this.companies.filter(c => c.CDLOCAL === company.CDLOCAL);
+    },
+    openModal() {
+      console.log("Opening modal");
+      this.showModal = true;
+    },
+    closeModal() {
+      console.log("Closing modal");
+      this.showModal = false;
     }
   }
+
 }
 </script>
