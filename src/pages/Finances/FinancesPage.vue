@@ -1,56 +1,51 @@
 <template>
   <div>
+    <FinancesTable v-model:items="displayedfinances" />
 
-    <CompanyCard :items="companies" />
-
-    <button @click="showModal = true">Mostrar Modal</button>
-    <BaseModal v-model:visible="showModal">
-      <template v-slot:header>
-        <h3>Header do Modal</h3>
-      </template>
-      <template v-slot:body>
-        <p>Corpo do Modal</p>
-      </template>
-      <template v-slot:footer>
-        <button @click="showModal = false">Cancelar</button>
-      </template>
-    </BaseModal>
   </div>
 </template>
 
 
 <script>
-import BaseModal from '../../components/Base/BaseModal.vue'
-import CompanyCard from '../../components/Company/CompanyCard.vue'
 import axios from 'axios'
+import FinancesTable from '@/components/Finances/FinancesTable.vue';
+
 export default {
   name: 'FinancesPage',
   components: {
-    BaseModal,
-    CompanyCard
+    FinancesTable
   },
   data() {
     return {
-      companies: [],
-      displayedCompanies: [],
+      finances: [],
+      displayedfinances: [],
       selectedCompany: null,
       showModal: false
     }
   },
   created() {
-    axios.get('http://localhost:3000/')
+    axios.get('http://localhost:3000/finances')
       .then(response => {
-        this.companies = response.data;
-        this.displayedCompanies = response.data;
+        this.finances = response.data;
+        this.displayedfinances = response.data;
       })
       .catch(error => {
         console.error(error);
       });
   },
   methods: {
-    filterCompanies(company) {
-      this.displayedCompanies = this.companies.filter(c => c.CDLOCAL === company.CDLOCAL);
+    filterfinances(company) {
+      this.displayedfinances = this.finances.filter(c => c.CDNOME === company.CDNOME);
+    },
+    openModal() {
+      console.log("Opening modal");
+      this.showModal = true;
+    },
+    closeModal() {
+      console.log("Closing modal");
+      this.showModal = false;
     }
   }
+
 }
 </script>

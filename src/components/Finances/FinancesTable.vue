@@ -1,16 +1,20 @@
 <template>
-   <div class="table-responsive">
+  <div class="table-responsive">
     <table class="table">
       <thead class="thead-dark">
         <tr>
-          <th>CDLOCAL</th>
-          <th>DSLOCAL</th>
+          <th>Codigo Cliente</th>
+          <th>Nome Cliente</th>
+          <th>Situacao Pagamento</th>
+          <th>Data Pagamento</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in items" :key="item.id">
-          <td >{{ item.CDLOCAL }}</td>
-          <td >{{ item.DSLOCAL}}</td>
+          <td>{{ item.CDNOME }}</td>
+          <td>{{ item.DSNOME }}</td>
+          <td>{{ item.SITUACAOPAGAMENTO }}</td>
+          <td>{{ item.DATAPAGAMENTO }}</td>
         </tr>
       </tbody>
     </table>
@@ -18,24 +22,14 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'FinancesTable',
-  data() {
-    return {
-      items: [],
-    };
-  },
-  created() {
-    axios.get('http://localhost:3000/company')
-      .then(response => {
-        this.items = response.data;
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  },
+  props: {
+    items: {
+      type: Array,
+      default: () => []
+    }
+  }
 };
 </script>
 
