@@ -1,15 +1,33 @@
-<!-- <template>
-  <div>
-    <h1>Home</h1>
-    <router-link to="/login">Go to login page</router-link>
-    <CompanyCard :items="displayedCompanies" />
-    import CompanyCard from '../../components/Company/CompanyCard.vue'
-    CompanyCard
+<template>
+  <div class="dashboard">
+    <Header>
+      <!-- Cabeçalho do painel de controle -->
+    </Header>
+    <MainContent>
+      <!-- Conteúdo principal do painel de controle -->
+    </MainContent>
+    <Sidebar>
+      <!-- Barra lateral do painel de controle -->
+    </Sidebar>
   </div>
-</template> -->
-<template
->
-<div>
-  
-</div>
 </template>
+<script>
+import Header from '@/components/Header.vue';
+import Sidebar from '@/components/Sidebar.vue';
+import MainContent from '@/components/MainContent.vue';
+
+export default {
+  name: 'HomeDashboard',
+  components: {
+    Header,
+    Sidebar,
+    MainContent
+  }
+}
+</script>
+<style>
+.dashboard {
+  display: flex;
+  padding: 78px;
+}
+</style>

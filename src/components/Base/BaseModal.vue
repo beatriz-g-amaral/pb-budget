@@ -1,20 +1,20 @@
 <template>
+  <!-- <button type="button" class="btn btn-primary" @click="open">Open Modal</button> -->
   <transition name="modal">
     <div v-if="visible" class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
           <div class="modal-header">
-            <slot name="header">default header</slot>
+            <slot name="header">{{ header }}</slot>
           </div>
           <div class="modal-body">
-            <slot name="body">default body</slot>
+            <slot name="body">{{ body }}</slot>
           </div>
           <div class="modal-footer">
             <slot name="footer">
-              default footer
-              <!-- <button class="modal-default-button"">OK</button> -->
+              {{ body }}
               <button type="button" class="btn btn-primary">Save changes</button>
-            <button type="button" class="btn btn-secondary" @click="closeModal()">Close</button>
+              <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
             </slot>
           </div>
         </div>
@@ -27,11 +27,21 @@
 export default {
   name: 'BaseModal',
   props: {
-    visible: Boolean
+    header: {
+      type: String
+    },
+    body: {
+      type: String
+    },
+    footer: {
+      type: String
+    },
+    visible: Boolean,
+    open: Function
   },
   methods: {
     closeModal() {
-      this.$emit('update:visible', false);
+      this.$emit('close');
     }
   }
 };

@@ -5,16 +5,19 @@
       </div>
       <Burger></Burger>
     </nav>
- 
+
     <Sidebar>
       <ul class="sidebar-panel-nav">
-        <li><a href="./finances">Home</a></li>
-        <li><a href="./finances">About</a></li>
-        <li><a href="./company">Contact</a></li>
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/finances">Finances</router-link></li>
+        <li><router-link to="/company">Company</router-link></li>
       </ul>
     </Sidebar>
+
+    <router-view></router-view>
   </div>
- </template>
+</template>
+
  
  <script>
  import Burger from './components/Menu/Burger.vue';
@@ -38,8 +41,8 @@
     border: 0; margin: 0; padding: 0;
     font-family: 'Lato';
     height: 100%;
-    /* background: rgb(158, 141, 228);
-    background: linear-gradient(45deg, rgb(92, 117, 228) 0%, rgba(225,113,87,1) 48%, rgba(249,248,113,1) 100%); */
+     background: rgb(158, 141, 228);
+    background: linear-gradient(45deg, rgb(92, 117, 228) 0%, rgba(225,113,87,1) 48%, rgba(249,248,113,1) 100%); 
   }
  
   .logo {
