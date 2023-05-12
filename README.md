@@ -6,6 +6,8 @@ Through the use of RESTful APIs, the application allows the creation, reading, u
 
 With the combination of Vue.js and Nest.js technologies, the application is fast, scalable and highly customizable, allowing users to easily modify the interface or add new features according to their specific needs.
 ## Project setup
+First you need the backend: https://github.com/beatriz-g-amaral/NestJSAPI
+Run the backend and then you can start the project
 ```
 npm install
 ```
