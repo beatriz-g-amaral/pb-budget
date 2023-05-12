@@ -1,19 +1,27 @@
 <template>
-  <!-- <button type="button" class="btn btn-primary" @click="open">Open Modal</button> -->
+  <div v-if="haveButton">
+    <button type="button" class="btn btn-primary" @click="open">{{ name }}</button>
+  </div>
   <transition name="modal">
     <div v-if="visible" class="modal-mask">
       <div class="modal-wrapper">
-        <div class="modal-container">
+        <div class="modal-container modal-content">
           <div class="modal-header">
             <slot name="header">{{ header }}</slot>
           </div>
           <div class="modal-body">
-            <slot name="body">{{ body }}</slot>
+            <input v-if="isCreation" class="input" type="text" v-model="localCompanyName" placeholder="Name">
+            <input v-if="isCreation" class="input" type="text" v-model="localCompanyCode" placeholder="companyCode">
+            <input v-if="isCreation" class="input" type="text" v-model="localCompanypaymentsituation"
+              placeholder="paymentsituation">
+            <input v-if="isCreation" class="input" type="date" v-model="localCompanyPaymentDate"
+              placeholder="companyDate">
+            <input v-if="isCreation" class="input" type="text" v-model="localCompanyService" placeholder="service">
+            <slot name="body" v-else>{{ body }}</slot>
           </div>
           <div class="modal-footer">
             <slot name="footer">
-              {{ body }}
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-primary" @click="submitModal">Save changes</button>
               <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
             </slot>
           </div>
@@ -26,6 +34,7 @@
 <script>
 export default {
   name: 'BaseModal',
+  emits: ['close', 'submit'],
   props: {
     header: {
       type: String
@@ -33,20 +42,46 @@ export default {
     body: {
       type: String
     },
-    footer: {
+    name: {
       type: String
     },
     visible: Boolean,
+    haveButton: Boolean,
     open: Function
   },
+  data() {
+    return {
+      localCompanyName: '',
+      localCompanyCode: '',
+      situacaoPagamento: '',
+      localCompanyPaymentDate: '',
+      localCompanyService: '',
+      localCompanypaymentsituation: ''
+    };
+  },
+  computed: {
+    isCreation() {
+      // Retorne aqui a condição que define se é uma criação ou não
+      return true;
+    }
+  },
   methods: {
+    submitModal() {
+      this.$emit('submit', {
+        nome: this.localCompanyName,
+        codigo: this.localCompanyCode,
+        situacaoPagamento: this.localCompanypaymentsituation,
+        dataPagamento: this.localCompanyPaymentDate,
+        servico: this.localCompanyService
+      });
+    },
+
     closeModal() {
       this.$emit('close');
     }
   }
 };
 </script>
-
 <style>
 .modal-mask {
   position: fixed;
@@ -55,7 +90,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(79, 78, 78, 0.5);
   display: table;
   transition: opacity 0.3s ease;
 }
@@ -69,7 +104,7 @@ export default {
   width: 300px;
   margin: 0px auto;
   padding: 20px 30px;
-  background-color: #fff;
+  background-color: #fff; /* Updated to an opaque color */
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
@@ -83,6 +118,10 @@ export default {
 
 .modal-body {
   margin: 20px 0;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column-reverse;
+  flex-wrap: wrap;
 }
 
 .modal-default-button {

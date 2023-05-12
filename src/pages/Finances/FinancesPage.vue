@@ -24,7 +24,7 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:3000/finances')
+    axios.get('http://localhost:3000/company')
       .then(response => {
         this.finances = response.data;
         this.displayedfinances = response.data;
@@ -34,8 +34,8 @@ export default {
       });
   },
   methods: {
-    filterfinances(company) {
-      this.displayedfinances = this.finances.filter(c => c.CDNOME === company.CDNOME);
+    filterfinances(finances) {
+      this.displayedfinances = this.finances.filter(c => c.nome === finances.nome);
     },
     openModal() {
       console.log("Opening modal");

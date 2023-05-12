@@ -1,24 +1,14 @@
 <template>
   <div>
-    <h1>Consulta de Locais</h1>
+    <div class="company">
+      <h1>Clientes</h1>
+      <BaseModal :haveButton="true" :visible="showModal" :open="openModal" :header="header" :name="name" :body="body"
+        @close="closeModal" @submit="createCompany" />
+    </div>
     <SearchCompany :filterFunction="filterCompanies" />
     <CompanyTable v-model:items="displayedCompanies" />
-
     <div>
-    <button @click="showModal = true">Mostrar Modal</button>
-    <BaseModal v-model:visible="showModal">
-      <template v-slot:header>
-        <h3>Header do Modal</h3>
-      </template>
-      <template v-slot:body>
-        <p>Corpo do Modal</p>
-      </template>
-      <template v-slot:footer>
-        <button type="button" class="btn btn-primary">Save changes</button>
-        <button type="button" class="btn btn-secondary" @click="closeModal()">Fechar</button>
-      </template>
-    </BaseModal>
-  </div>
+    </div>
 
   </div>
 </template>
@@ -26,9 +16,11 @@
 <script>
 import SearchCompany from '../../components/Company/SearchCompany.vue'
 import CompanyTable from '../../components/Company/CompanyTables.vue'
-import BaseModal from '../../components/Base/BaseModal.vue'
+import BaseModal from '@/components/Base/BaseModal.vue';
+
 
 import axios from 'axios';
+
 
 export default {
   name: 'CompanyPage',
@@ -39,6 +31,9 @@ export default {
   },
   data() {
     return {
+      header: 'Criar novo cliente',
+      body: 'teste de criar',
+      name: 'Adicionar cliente',
       companies: [],
       displayedCompanies: [],
       selectedCompany: null,
@@ -57,7 +52,7 @@ export default {
   },
   methods: {
     filterCompanies(company) {
-      this.displayedCompanies = this.companies.filter(c => c.CDLOCAL === company.CDLOCAL);
+      this.displayedCompanies = this.companies.filter(c => c.codigo === company.codigo);
     },
     openModal() {
       console.log("Opening modal");
@@ -66,8 +61,40 @@ export default {
     closeModal() {
       console.log("Closing modal");
       this.showModal = false;
+    },
+    createCompany(companyData) {
+      // Envia a solicitação POST para o endpoint de criação de empresa no Nest.js
+      axios.post('http://localhost:3000/company', companyData)
+        .then(response => {
+          // Lida com a resposta do servidor, se necessário
+          console.log(response.data);
+          // Fecha o modal após a criação da empresa
+          this.showModal = false;
+          // Atualiza a lista de empresas exibidas
+          axios.get('http://localhost:3000/company')
+            .then(response => {
+              this.companies = response.data;
+              this.displayedCompanies = response.data;
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        })
+        .catch(error => {
+          // Lida com erros, se necessário
+          console.error(error);
+        });
     }
   }
 
 }
+
 </script>
+<style>
+.company {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  justify-content: space-evenly;
+}
+</style>

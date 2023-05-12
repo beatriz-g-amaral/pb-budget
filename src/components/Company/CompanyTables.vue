@@ -3,14 +3,20 @@
     <table class="table">
       <thead class="thead-dark">
         <tr>
-          <th>CDLOCAL</th>
-          <th>DSLOCAL</th>
+          <th>Código Cliente</th>
+          <th>Nome Cliente</th>
+          <th>Situação Pagamento</th>
+          <th>Data Pagamento</th>
+          <th>Servico</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in items" :key="item.CDLOCAL">
-          <td>{{ item.CDLOCAL }}</td>
-          <td>{{ item.DSLOCAL }}</td>
+        <tr v-for="item in items" :key="item.id">
+          <td>{{ item.id }}</td>
+          <td>{{ item.nome }}</td>
+          <td>{{ item.situacaoPagamento }}</td>
+          <td>{{ item.dataPagamento }}</td>
+          <td>{{ item.servico }}</td>
         </tr>
       </tbody>
     </table>
@@ -19,7 +25,7 @@
 
 <script>
 export default {
-  name: 'CompanyTable',
+  name: 'EmpresasTable',
   props: {
     items: {
       type: Array,
