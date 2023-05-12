@@ -12,10 +12,8 @@
           <div class="modal-body">
             <input v-if="isCreation" class="input" type="text" v-model="localCompanyName" placeholder="Name">
             <input v-if="isCreation" class="input" type="text" v-model="localCompanyCode" placeholder="companyCode">
-            <input v-if="isCreation" class="input" type="text" v-model="localCompanypaymentsituation"
-              placeholder="paymentsituation">
-            <input v-if="isCreation" class="input" type="date" v-model="localCompanyPaymentDate"
-              placeholder="companyDate">
+            <input v-if="isCreation" class="input" type="text" v-model="localCompanypaymentsituation" placeholder="paymentsituation">
+            <input v-if="isCreation" class="input" type="date" v-model="localCompanyPaymentDate" placeholder="companyDate">
             <input v-if="isCreation" class="input" type="text" v-model="localCompanyService" placeholder="service">
             <slot name="body" v-else>{{ body }}</slot>
           </div>
@@ -47,7 +45,8 @@ export default {
     },
     visible: Boolean,
     haveButton: Boolean,
-    open: Function
+    open: Function,
+    isCreation: Boolean // Added isCreation prop
   },
   data() {
     return {
@@ -59,12 +58,6 @@ export default {
       localCompanypaymentsituation: ''
     };
   },
-  computed: {
-    isCreation() {
-      // Retorne aqui a condição que define se é uma criação ou não
-      return true;
-    }
-  },
   methods: {
     submitModal() {
       this.$emit('submit', {
@@ -75,7 +68,6 @@ export default {
         servico: this.localCompanyService
       });
     },
-
     closeModal() {
       this.$emit('close');
     }

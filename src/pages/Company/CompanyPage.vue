@@ -2,11 +2,11 @@
   <div>
     <div class="company">
       <h1>Clientes</h1>
-      <BaseModal :haveButton="true" :visible="showModal" :open="openModal" :header="header" :name="name" :body="body"
-        @close="closeModal" @submit="createCompany" />
+      <BaseModal :isCreation="isCreation" :haveButton="true" :visible="showModal" :open="openModal" :header="header"
+        :name="name" :body="body" @close="closeModal" @submit="createCompany"  />
     </div>
     <SearchCompany :filterFunction="filterCompanies" />
-    <CompanyTable v-model:items="displayedCompanies" />
+    <CompanyTable v-model:items="displayedCompanies" @delete="deleteCompany" />
     <div>
     </div>
 
@@ -36,6 +36,7 @@ export default {
       name: 'Adicionar cliente',
       companies: [],
       displayedCompanies: [],
+      isCreation: true,
       selectedCompany: null,
       showModal: false
     }
@@ -52,8 +53,15 @@ export default {
   },
   methods: {
     filterCompanies(company) {
-      this.displayedCompanies = this.companies.filter(c => c.codigo === company.codigo);
+      if (company) {
+        this.displayedCompanies = this.companies.filter(c => c.codigo === company.codigo);
+      } else {
+        this.displayedCompanies = this.companies;
+      }
+      
     },
+    
+
     openModal() {
       console.log("Opening modal");
       this.showModal = true;
@@ -82,6 +90,21 @@ export default {
         })
         .catch(error => {
           // Lida com erros, se necessário
+          console.error(error);
+        });
+    },
+    deleteCompany(id) {
+      // Send a DELETE request to the server to delete the company
+      axios.delete(`http://localhost:3000/company/${id}`)
+        .then(response => {
+          // Handle the response, if necessary
+          console.log(response.data);
+          
+          // Update the list of displayed companies
+          this.displayedCompanies = this.displayedCompanies.filter(item => item.id !== id);
+        })
+        .catch(error => {
+          // Handle errors, if necessary
           console.error(error);
         });
     }

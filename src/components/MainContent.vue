@@ -9,7 +9,7 @@
     <div class="calendar-container">
       <FullCalendar :options="calendarOptions" />
     </div>
-    <BaseModal :visible="showModal" :open="openModal" :header="header" :body="body" @close="closeModal" />
+    <BaseModal :isCreation="isCreation" :visible="showModal" :open="openModal" :header="header" :body="body" @close="closeModal" />
   </div>
 </template>
 
@@ -37,6 +37,7 @@ export default {
     return {
       showModal: false,
       header: '',
+      isCreation: false,
       body: '',
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, bootstrap5Plugin],

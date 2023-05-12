@@ -2,30 +2,49 @@
   <div class="lista">
     <h1>Lista de Clientes Ativos</h1>
     <ul>
-      <li v-for="item in items" :key="item.id">{{ item.name }}</li>
+      <CompanyTables v-model:items="displayedCompanies"  :filterPaid="true" />
     </ul>
   </div>
 </template>
 
 <script>
+import CompanyTables from '@/components/Company/CompanyTables.vue';
+import axios from 'axios';
 export default {
   name: 'SideBarHome',
+  components: {
+    CompanyTables
+  },
   data() {
     return {
-      items: [
-        { id: 1, name: 'Alexandro ' },
-        { id: 2, name: 'Milton ' },
-        { id: 3, name: 'Karen ' },
-        { id: 4, name: 'Pai ' },
-        { id: 5, name: 'Gustavo' },
-      ],
+      displayedCompanies: []
     };
   },
-};
-</script>
-<style>
-.lista{
-  padding-top: 16px;
+  created() {
+    axios.get('http://localhost:3000/company')
+      .then(response => {
+        this.companies = response.data;
+        this.displayedCompanies = response.data;
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+  computed: {
+  filteredCompanies() {
+    if (this.filterPaid) {
+      return this.items.filter(item => item.situacaoPagamento === 'sim');
+    } else {
+      return this.items;
+    }
+  }
 }
 
+};
+</script>
+
+<style>
+.lista {
+  padding-top: 16px;
+}
 </style>

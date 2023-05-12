@@ -5,7 +5,7 @@
         <span class="input-group-text" id="inputGroup-sizing-default">Limpar</span>
       </div>
       <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
-        v-model="searchTerm" placeholder="Digite o codigo da empresa">
+        v-model="searchTerm" placeholder="Digite o codigo">
     </div>
     <button @click="searchCompany">Pesquisar</button>
   </div>
@@ -41,7 +41,7 @@ export default {
     },
 
     selectCompany(company) {
-      this.searchTerm = company.CDLOCAL;
+      this.searchTerm = company.codigo;
       this.searchResult = [];
       this.$emit('company-selected', company);
     },
