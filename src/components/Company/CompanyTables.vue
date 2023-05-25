@@ -3,22 +3,22 @@
     <table class="table">
       <thead class="thead-dark">
         <tr>
-          <th>Código Cliente</th>
-          <th>Nome Cliente</th>
-          <th>Situação Pagamento</th>
-          <th>Data Pagamento</th>
-          <th>Serviço</th>
+          <th scope="col">Código Cliente</th>
+          <th scope="col">Nome Cliente</th>
+          <th scope="col">Situação Pagamento</th>
+          <th scope="col">Data Pagamento</th>
+          <th scope="col">Serviço</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in filteredItems" :key="item.id">
-          <td>{{ item.id }}</td>
-          <td>{{ item.nome }}</td>
-          <td>{{ item.situacaoPagamento }}</td>
-          <td>{{ item.dataPagamento }}</td>
-          <td>{{ item.servico }}</td>
-          <td>
-            <button @click="deleteItem(item.id)">Delete</button>
+          <td scope="row">{{ item.codigo }}</td>
+          <td scope="row">{{ item.nome }}</td>
+          <td scope="row">{{ item.situacaoPagamento }}</td>
+          <td scope="row">{{ item.dataPagamento }}</td>
+          <td scope="row">{{ item.servico }}</td>
+          <td scope="row">
+            <button class="btn btn-danger" @click="deleteCompany(item.codigo)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -29,6 +29,7 @@
 <script>
 export default {
   name: 'CompanyTables',
+  emits: ['delete'],
   props: {
     items: {
       type: Array,
@@ -39,7 +40,7 @@ export default {
       default: false
     },
   },
-  emits: ['delete'],
+ 
   computed: {
     filteredItems() {
       if (this.filterPaid) {
@@ -50,9 +51,9 @@ export default {
     }
   },
   methods: {
-    deleteItem(id) {
-      console.log('delete', id);
-      this.$emit('delete', id); 
+    deleteCompany(codigo) {
+      this.$emit('delete', codigo);
+      console.log('here');
     }
   }
 };

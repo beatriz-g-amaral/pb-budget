@@ -2,6 +2,7 @@
   <div id="app">
     <nav class="main-nav">
       <div class="logo">
+        <img src="@/assets/Imperialogo.png" alt="Big Boat" style="height: 100px;">
       </div>
       <Burger></Burger>
     </nav>
@@ -11,12 +12,13 @@
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/finances">Finances</router-link></li>
         <li><router-link to="/company">Company</router-link></li>
+        <li><router-link to="/calendar">Calendar</router-link></li>
       </ul>
     </Sidebar>
 
     <router-view></router-view>
   </div>
-</template>
+</template>ß
 
  
  <script>
@@ -41,8 +43,7 @@
     border: 0; margin: 0; padding: 0;
     font-family: 'Lato';
     height: 100%;
-     background: rgb(158, 141, 228);
-    background: linear-gradient(45deg, rgb(92, 117, 228) 0%, rgba(225,113,87,1) 48%, rgba(249,248,113,1) 100%); 
+    background: rgb(114, 114, 114);
   }
  
   .logo {

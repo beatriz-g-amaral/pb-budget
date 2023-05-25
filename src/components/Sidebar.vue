@@ -1,50 +1,64 @@
 <template>
-  <div class="lista">
-    <h1>Lista de Clientes Ativos</h1>
+  <div>
+    <h1>{{ title }}</h1>
+    <div>
+      <label>Name:</label>
+      <input v-model="name" />
+    </div>
+    <div>
+      <label>Message:</label>
+      <input v-model="text" />
+    </div>
+    <button @click="sendMessage">Send</button>
     <ul>
-      <CompanyTables v-model:items="displayedCompanies"  :filterPaid="true" />
+      <li v-for="message in messages" :key="message.id">
+        <strong>{{ message.name }}</strong>: {{ message.text }}
+      </li>
     </ul>
   </div>
 </template>
 
 <script>
-import CompanyTables from '@/components/Company/CompanyTables.vue';
-import axios from 'axios';
+import io from 'socket.io-client';
+
 export default {
-  name: 'SideBarHome',
-  components: {
-    CompanyTables
-  },
+  name:"SideBarhome",
   data() {
     return {
-      displayedCompanies: []
+      title: 'Chat',
+      name: '',
+      text: '',
+      messages: [],
+      socket: null,
     };
   },
-  created() {
-    axios.get('http://localhost:3000/company')
-      .then(response => {
-        this.companies = response.data;
-        this.displayedCompanies = response.data;
-      })
-      .catch(error => {
-        console.error(error);
-      });
+  methods: {
+    sendMessage() {
+      if (this.validateInput()) {
+        const message = {
+          name: this.name,
+          text: this.text,
+        };
+        this.socket.emit('msgToServer', message);
+        this.text = '';
+      }
+    },
+    receivedMessage(message) {
+      this.messages.push(message);
+    },
+    validateInput() {
+      return this.name.length > 0 && this.text.length > 0;
+    },
   },
-  computed: {
-  filteredCompanies() {
-    if (this.filterPaid) {
-      return this.items.filter(item => item.situacaoPagamento === 'sim');
-    } else {
-      return this.items;
-    }
-  }
-}
-
+  created() {
+    this.socket = io('http://localhost:3000');
+    this.socket.on('msgToClient', (message) => {
+      this.receivedMessage(message);
+    });
+  },
 };
 </script>
 
 <style>
-.lista {
-  padding-top: 16px;
-}
+
 </style>

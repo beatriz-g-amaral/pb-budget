@@ -2,11 +2,19 @@
   <div>
     <div class="company">
       <h1>Clientes</h1>
-      <BaseModal :isCreation="isCreation" :haveButton="true" :visible="showModal" :open="openModal" :header="header"
-        :name="name" :body="body" @close="closeModal" @submit="createCompany"  />
+      <SearchCompany :filterFunction="filterCompanies" />
+      <button class="btn btn-primary" @click="showModal = true">Criar Cliente</button>
+      <BaseModal :title="modalTitle" :is-open="showModal" @open="openModal" @close="closeModal" @submit="createCompany">
+        <input class="form-control" type="text" v-model="localCompanyName" placeholder="Name">
+        <input class="form-control" type="text" v-model="localCompanyCode" placeholder="companyCode">
+        <input class="form-control" type="text" v-model="localCompanypaymentsituation" placeholder="paymentsituation">
+        <input class="form-control" type="date" v-model="localCompanyPaymentDate" placeholder="companyDate">
+        <input class="form-control" type="text" v-model="localCompanyService" placeholder="service">
+      </BaseModal>
+     
+
     </div>
-    <SearchCompany :filterFunction="filterCompanies" />
-    <CompanyTable v-model:items="displayedCompanies" @delete="deleteCompany" />
+    <CompanyTable v-model:items="displayedCompanies" v-on:delete="deleteCompany" />
     <div>
     </div>
 
@@ -31,14 +39,13 @@ export default {
   },
   data() {
     return {
-      header: 'Criar novo cliente',
+      showModal: false,
+      modalTitle: 'Criar Cliente',
       body: 'teste de criar',
       name: 'Adicionar cliente',
       companies: [],
       displayedCompanies: [],
-      isCreation: true,
       selectedCompany: null,
-      showModal: false
     }
   },
   created() {
@@ -58,9 +65,9 @@ export default {
       } else {
         this.displayedCompanies = this.companies;
       }
-      
+
     },
-    
+
 
     openModal() {
       console.log("Opening modal");
@@ -71,14 +78,10 @@ export default {
       this.showModal = false;
     },
     createCompany(companyData) {
-      // Envia a solicitação POST para o endpoint de criação de empresa no Nest.js
       axios.post('http://localhost:3000/company', companyData)
         .then(response => {
-          // Lida com a resposta do servidor, se necessário
           console.log(response.data);
-          // Fecha o modal após a criação da empresa
-          this.showModal = false;
-          // Atualiza a lista de empresas exibidas
+          this.closeModal();
           axios.get('http://localhost:3000/company')
             .then(response => {
               this.companies = response.data;
@@ -89,35 +92,37 @@ export default {
             });
         })
         .catch(error => {
-          // Lida com erros, se necessário
-          console.error(error);
+          // Handle errors
+          if (error.response && error.response.status === 409) {
+            console.error('Company code already exists');
+          } else {
+            console.error(error);
+          }
         });
     },
-    deleteCompany(id) {
-      // Send a DELETE request to the server to delete the company
-      axios.delete(`http://localhost:3000/company/${id}`)
+
+    deleteCompany(codigo) {
+      console.log('here2');
+      axios.delete(`http://localhost:3000/company/${codigo}`)
         .then(response => {
-          // Handle the response, if necessary
           console.log(response.data);
-          
-          // Update the list of displayed companies
-          this.displayedCompanies = this.displayedCompanies.filter(item => item.id !== id);
+          this.displayedCompanies = this.displayedCompanies.filter(company => company.codigo !== codigo);
         })
         .catch(error => {
-          // Handle errors, if necessary
           console.error(error);
         });
     }
   }
-
 }
-
 </script>
 <style>
 .company {
   display: flex;
   flex-wrap: wrap;
-  align-content: flex-end;
-  justify-content: space-evenly;
+  align-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+
 }
 </style>

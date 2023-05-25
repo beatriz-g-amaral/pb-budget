@@ -3,20 +3,18 @@
     <table class="table">
       <thead class="thead-dark">
         <tr>
-          <th>Código Cliente</th>
-          <th>Nome Cliente</th>
-          <th>Situação Pagamento</th>
-          <th>Data Pagamento</th>
-          <th>Servico</th>
+          <th>compra</th>
+          <th>valor</th>
+          <th>dataPagamento</th>
+          <th>situacaoPagamento</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in items" :key="item.id">
-          <td>{{ item.id }}</td>
-          <td>{{ item.nome }}</td>
-          <td>{{ item.situacaoPagamento }}</td>
+          <td>{{ item.compra }}</td>
+          <td>{{ item.valor }}</td>
           <td>{{ item.dataPagamento }}</td>
-          <td>{{ item.servico }}</td>
+          <td>{{ item.situacaoPagamento }}</td>
         </tr>
       </tbody>
     </table>

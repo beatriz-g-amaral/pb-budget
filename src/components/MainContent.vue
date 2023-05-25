@@ -1,16 +1,14 @@
 <template>
   <div class="calendar">
     <h1>Calendário de Posts</h1>
-    <div class="event-input">
-      <input type="text" v-model="newEvent.title" placeholder="Evento" />
-      <input type="date" v-model="newEvent.date" />
-      <button type="button" @click="createEvent">Criar Evento</button>
-    </div>
-    <div class="calendar-container">
+    <div class="calendar">
       <FullCalendar :options="calendarOptions" />
     </div>
-    <BaseModal :isCreation="isCreation" :visible="showModal" :open="openModal" :header="header" :body="body" @close="closeModal" />
   </div>
+  <BaseModal :title="modalTitle" :is-open="showModal" @close="closeModal" v-if="selectedEvent">
+      <img :src="selectedEvent.image" alt="Evento" class="img-fluid" v-if="selectedEvent.image" />
+      <p v-html="selectedEvent.body"></p>
+    </BaseModal>
 </template>
 
 <script>
@@ -20,12 +18,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import BaseModal from '@/components/Base/BaseModal.vue';
 
+import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
-/* TODO:
-Criar o evendo direto do banco de dados e puxar de la, no momento esta criando apenas no local storage.
-*/
 
 export default {
   name: 'MainContent',
@@ -37,65 +32,72 @@ export default {
     return {
       showModal: false,
       header: '',
-      isCreation: false,
-      body: '',
+      modalTitle: 'Informacoes do Evento',
+      body:'',
+      selectedEvent: {
+        title: '',
+        image: '',
+        body: ''
+      },
       calendarOptions: {
         plugins: [interactionPlugin, dayGridPlugin, bootstrap5Plugin],
         initialView: 'dayGridMonth',
         themeSystem: 'bootstrap5',
         editable: true,
         events: [],
-        eventClick: this.openModal
+        eventClick: this.openModal,
+        contentHeight: '400px'
       },
-      newEvent: {
-        title: '',
-        date: ''
-      }
     };
   },
   methods: {
     openModal(info) {
+      console.log(info);
+      console.log(info.event);
+      console.log(info.event.extendedProps);
+      if (info.event.extendedProps) {
+        this.selectedEvent.title = info.event.title;
+        this.selectedEvent.image = info.event.extendedProps.image;
+        this.selectedEvent.body = info.event.extendedProps.body;
+      }
       this.showModal = true;
-      this.header = info.event.title;
-      this.body = info.event.body;
     },
     closeModal() {
       this.showModal = false;
     },
-    createEvent() {
-      if (this.newEvent.title) {
-        const newEvent = {
-          title: this.newEvent.title,
-          start: new Date()
-        };
-        this.calendarOptions.events.push(newEvent);
-        this.newEvent.title = ''; // Limpar o input
-        this.saveEventsToLocalStorage(); // Salvar os eventos no Local Storage
-        alert('Evento criado com sucesso!');
-      } else {
-        alert('Por favor, insira um título para o evento.');
+    handleFileChange(event) {
+      this.newEvent.image = event.target.files[0];
+    },
+    async loadEvents() {
+      try {
+        const response = await axios.get('http://localhost:3000/eventos');
+        console.log(response);
+        const events = response.data.map(event => ({
+          title: event.nome_evento,
+          start: event.data_evento,
+          extendedProps: {
+            image: `http://localhost:3000/file/${event.imagem}`,
+            body: event.nome_evento 
+          }
+        }));
+        this.calendarOptions.events = events;
+      } catch (error) {
+        console.error('Erro ao carregar eventos:', error);
+        alert('Ocorreu um erro ao carregar os eventos.');
       }
     },
-    saveEventsToLocalStorage() {
-      const events = JSON.stringify(this.calendarOptions.events);
-      localStorage.setItem('events', events);
-    },
-    loadEventsFromLocalStorage() {
-      const events = localStorage.getItem('events');
-      if (events) {
-        this.calendarOptions.events = JSON.parse(events);
-      }
-    }
   },
   created() {
-    this.loadEventsFromLocalStorage(); // Carregar os eventos do Local Storage ao inicializar o componente
+    this.loadEvents(); 
   }
 };
 </script>
 
+
 <style>
 .calendar {
-  padding: 16px;
+  width: 300px;
+  margin: 0 auto;
 }
 
 .event-input {

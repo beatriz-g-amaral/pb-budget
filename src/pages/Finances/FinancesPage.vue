@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FinancesTable v-model:items="displayedfinances" />
+    <FinancesCard v-model:items="displayedfinances" />
 
   </div>
 </template>
@@ -8,12 +8,12 @@
 
 <script>
 import axios from 'axios'
-import FinancesTable from '@/components/Finances/FinancesTable.vue';
+import FinancesCard from '@/components/Finances/FinancesCard.vue';
 
 export default {
   name: 'FinancesPage',
   components: {
-    FinancesTable
+    FinancesCard
   },
   data() {
     return {

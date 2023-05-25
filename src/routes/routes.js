@@ -3,7 +3,7 @@ import Home from '../pages/Home/HomeIndex.vue';
 import LoginPage from '../pages/Login/LoginIndex.vue';
 import FinancesPage from '../pages/Finances/FinancesPage.vue'
 import Company from '../pages/Company/CompanyPage.vue'
-
+import CalendarPage from '../pages/Calendar/CalendarPage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,7 +27,12 @@ const router = createRouter({
       path: '/company',
       name: 'company',
       component: Company,
-    }
+    },
+    {
+      path: '/calendar',
+      name: 'calendar',
+      component: CalendarPage,
+    },
   ],
 });
 
