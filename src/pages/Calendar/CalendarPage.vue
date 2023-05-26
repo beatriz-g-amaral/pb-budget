@@ -15,7 +15,6 @@
       <img :src="selectedEvent.image" alt="Evento" class="img-fluid" v-if="selectedEvent.image" />
       <p v-html="selectedEvent.body"></p>
     </BaseModal>
-
   </div>
 </template>
 
@@ -40,8 +39,7 @@ export default {
       showSecondModal: false,
       showModal: false,
       modalTitle: 'Criar Evento',
-      header: '',
-      secondModalTitle: 'Informacoes do Evento',
+      secondModalTitle: 'Informações do Evento',
       selectedEvent: {
         title: '',
         image: '',
@@ -53,7 +51,7 @@ export default {
         themeSystem: 'bootstrap5',
         editable: true,
         events: [],
-        eventClick: this.openW,
+        eventClick: this.openEventInfo,
         contentHeight: '500px'
       },
       newEvent: {
@@ -65,7 +63,7 @@ export default {
     };
   },
   methods: {
-    openW(info) {
+    openEventInfo(info) {
       if (info.event.extendedProps) {
         this.selectedEvent.title = info.event.title;
         this.selectedEvent.image = info.event.extendedProps.image;
@@ -74,25 +72,21 @@ export default {
       this.showSecondModal = true;
     },
     closeSecondModal() {
-     
       this.showSecondModal = false;
       this.selectedEvent.title = '';
       this.selectedEvent.image = '';
       this.selectedEvent.body = '';
     },
     openModal() {
-     
       this.showModal = true;
     },
     closeModal() {
-   
       this.showModal = false;
     },
     handleFileChange(event) {
       this.newEvent.image = event.target.files[0];
     },
     async createEvent() {
-
       if (this.newEvent.nome_evento && this.newEvent.data_evento && this.newEvent.image) {
         const formData = new FormData();
         const evento_id = Math.floor(Math.random() * (999 - 100 + 1) + 100);
@@ -119,7 +113,6 @@ export default {
         alert('Por favor, preencha todos os campos e selecione uma imagem.');
       }
     },
-
     async loadEvents() {
       try {
         const response = await axios.get('http://localhost:3000/eventos');
@@ -127,8 +120,8 @@ export default {
           title: event.nome_evento,
           start: event.data_evento,
           extendedProps: {
-            image: `http://localhost:3000/file/${event.imagem}`, 
-            body: event.nome_evento 
+            image: `http://localhost:3000/file/${event.imagem}`,
+            body: event.nome_evento
           }
         }));
         this.calendarOptions.events = events;

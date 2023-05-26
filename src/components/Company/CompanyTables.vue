@@ -62,12 +62,10 @@ export default {
     },
     deleteCompany(codigo) {
       this.$emit('delete', codigo);
-      console.log('here');
     },
     selectCompany(company) {
       this.selectedCompanyDetails = company;
       this.$emit('select', company);
-     
     },
   }
 };

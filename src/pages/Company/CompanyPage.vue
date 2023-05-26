@@ -6,10 +6,10 @@
       <button class="btn btn-primary" @click="showModal = true">Criar Cliente</button>
       <BaseModal :title="modalTitle" :is-open="showModal" @close="closeModal" @submit="createCompany">
         <input class="form-control" type="text" v-model="companyData.nome" placeholder="Nome do Cliente">
-        <input class="form-control" type="text" v-model="companyData.codigo" placeholder="Codigo do Cliente">
-        <input class="form-control" type="text" v-model="companyData.situacaoPagamento" placeholder="Situacao Pagamento">
+        <input class="form-control" type="text" v-model="companyData.codigo" placeholder="Código do Cliente">
+        <input class="form-control" type="text" v-model="companyData.situacaoPagamento" placeholder="Situação Pagamento">
         <input class="form-control" type="date" v-model="companyData.dataPagamento" placeholder="Data de Pagamento">
-        <input class="form-control" type="text" v-model="companyData.servico" placeholder="Tipo de Servico">
+        <input class="form-control" type="text" v-model="companyData.servico" placeholder="Tipo de Serviço">
       </BaseModal>
     </div>
     <CompanyTable :companies="displayedCompanies" @delete="deleteCompany" @select="showCompany" />
@@ -44,7 +44,7 @@ export default {
     return {
       showModal: false,
       modalTitle: 'Criar Cliente',
-      SecondmodalTitle: 'Informacoes do Cliente',
+      SecondmodalTitle: 'Informações do Cliente',
       companies: [],
       displayedCompanies: [],
       selectedCompany: null,
@@ -81,7 +81,6 @@ export default {
       } else {
         this.displayedCompanies = this.companies;
       }
-
     },
     createCompany() {
       if (this.companyData.nome && this.companyData.dataPagamento && this.companyData.situacaoPagamento) {
@@ -106,10 +105,9 @@ export default {
             }
           });
       } else {
-        alert('Por favor, preencha todos os campos de Nome, Codigo e Situacao de Pagamento');
+        alert('Por favor, preencha todos os campos de Nome, Código e Situação de Pagamento');
       }
     },
-
     deleteCompany(codigo) {
       console.log('here2');
       axios.delete(`http://localhost:3000/company/${codigo}`)
@@ -121,7 +119,6 @@ export default {
           console.error(error);
         });
     },
-
     editCompany(codigo) {
       axios.update(`http://localhost:3000/company/${codigo}`)
         .then(response => {
