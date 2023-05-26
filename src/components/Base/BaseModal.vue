@@ -38,21 +38,18 @@ export default {
   methods: {
     toggleModal() {
       if (this.isOpen) {
-        console.log('chegou aqui no toggleModal is open');
         this.closeModal();
       } else {
-        console.log('chegou aqui no toggleModal else');
+
         this.openModal();
       }
     },
     openModal() {
-      console.log('chegou aqui no open modal do base modal');
       this.$emit('submit');
       this.$emit('open');
     },
 
     closeModal() {
-      console.log('chegou aqui no close modal do base modal');
       this.$emit('close');
     }
   }

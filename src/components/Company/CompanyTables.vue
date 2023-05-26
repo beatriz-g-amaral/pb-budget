@@ -11,14 +11,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in filteredItems" :key="item.id">
-          <td scope="row">{{ item.codigo }}</td>
-          <td scope="row">{{ item.nome }}</td>
-          <td scope="row">{{ item.situacaoPagamento }}</td>
-          <td scope="row">{{ item.dataPagamento }}</td>
-          <td scope="row">{{ item.servico }}</td>
+        <tr v-for="company in filteredCompanies" :key="company.codigo"
+          :class="{ 'selected-row': company === selectedCompany }" @click="selectCompany(company)">
+          <td scope="row">{{ company.codigo }}</td>
+          <td scope="row">{{ company.nome }}</td>
+          <td scope="row">{{ company.situacaoPagamento }}</td>
+          <td scope="row">{{ company.dataPagamento }}</td>
+          <td scope="row">{{ company.servico }}</td>
           <td scope="row">
-            <button class="btn btn-danger" @click="deleteCompany(item.codigo)">Delete</button>
+            <button class="btn btn-danger" @click="deleteCompany(company.codigo)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -29,32 +30,53 @@
 <script>
 export default {
   name: 'CompanyTables',
-  emits: ['delete'],
+  emits: ['delete', 'update', 'select'],
   props: {
-    items: {
+    companies: {
       type: Array,
       default: () => []
     },
+    selectedCompany: Object,
     filterPaid: {
       type: Boolean,
       default: false
     },
   },
- 
+  data() {
+    return {
+      selectedCompanyDetails: null,
+    }
+  },
   computed: {
-    filteredItems() {
+    filteredCompanies() {
       if (this.filterPaid) {
-        return this.items.filter(item => item.situacaoPagamento === 'PAGO');
+        return this.companies.filter(company => company.situacaoPagamento === 'PAGO');
       } else {
-        return this.items;
+        return this.companies;
       }
     }
   },
   methods: {
+    editCompany(codigo) {
+      this.$emit('update', codigo);
+    },
     deleteCompany(codigo) {
       this.$emit('delete', codigo);
       console.log('here');
-    }
+    },
+    selectCompany(company) {
+      this.selectedCompanyDetails = company;
+      this.$emit('select', company);
+     
+    },
   }
 };
 </script>
+
+<style>
+.selected-row {
+  background-color: #373737;
+  cursor: pointer;
+  cursor: auto;
+}
+</style>

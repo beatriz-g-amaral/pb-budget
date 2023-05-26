@@ -4,20 +4,26 @@
       <h1>Clientes</h1>
       <SearchCompany :filterFunction="filterCompanies" />
       <button class="btn btn-primary" @click="showModal = true">Criar Cliente</button>
-      <BaseModal :title="modalTitle" :is-open="showModal" @open="openModal" @close="closeModal" @submit="createCompany">
-        <input class="form-control" type="text" v-model="localCompanyName" placeholder="Name">
-        <input class="form-control" type="text" v-model="localCompanyCode" placeholder="companyCode">
-        <input class="form-control" type="text" v-model="localCompanypaymentsituation" placeholder="paymentsituation">
-        <input class="form-control" type="date" v-model="localCompanyPaymentDate" placeholder="companyDate">
-        <input class="form-control" type="text" v-model="localCompanyService" placeholder="service">
+      <BaseModal :title="modalTitle" :is-open="showModal" @close="closeModal" @submit="createCompany">
+        <input class="form-control" type="text" v-model="companyData.nome" placeholder="Nome do Cliente">
+        <input class="form-control" type="text" v-model="companyData.codigo" placeholder="Codigo do Cliente">
+        <input class="form-control" type="text" v-model="companyData.situacaoPagamento" placeholder="Situacao Pagamento">
+        <input class="form-control" type="date" v-model="companyData.dataPagamento" placeholder="Data de Pagamento">
+        <input class="form-control" type="text" v-model="companyData.servico" placeholder="Tipo de Servico">
       </BaseModal>
-     
-
     </div>
-    <CompanyTable v-model:items="displayedCompanies" v-on:delete="deleteCompany" />
+    <CompanyTable :companies="displayedCompanies" @delete="deleteCompany" @select="showCompany" />
     <div>
+      <BaseModal :title="SecondmodalTitle" :is-open="showCompanyModal" @close="closeModal2">
+        <h2>{{ selectedCompany.nome }}</h2>
+        <p>Código: {{ selectedCompany.codigo }}</p>
+        <p>Situação de Pagamento: {{ selectedCompany.situacaoPagamento }}</p>
+        <p>Data de Pagamento: {{ selectedCompany.dataPagamento }}</p>
+        <p>Serviço: {{ selectedCompany.servico }}</p>
+      </BaseModal>
     </div>
-
+  </div>
+  <div>
   </div>
 </template>
 
@@ -25,10 +31,7 @@
 import SearchCompany from '../../components/Company/SearchCompany.vue'
 import CompanyTable from '../../components/Company/CompanyTables.vue'
 import BaseModal from '@/components/Base/BaseModal.vue';
-
-
 import axios from 'axios';
-
 
 export default {
   name: 'CompanyPage',
@@ -41,11 +44,18 @@ export default {
     return {
       showModal: false,
       modalTitle: 'Criar Cliente',
-      body: 'teste de criar',
-      name: 'Adicionar cliente',
+      SecondmodalTitle: 'Informacoes do Cliente',
       companies: [],
       displayedCompanies: [],
       selectedCompany: null,
+      showCompanyModal: false,
+      companyData: {
+        nome: '',
+        codigo: '',
+        situacaoPagamento: '',
+        dataPagamento: '',
+        servico: ''
+      }
     }
   },
   created() {
@@ -59,6 +69,12 @@ export default {
       });
   },
   methods: {
+    closeModal2() {
+      this.showCompanyModal = false;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
     filterCompanies(company) {
       if (company) {
         this.displayedCompanies = this.companies.filter(c => c.codigo === company.codigo);
@@ -67,38 +83,31 @@ export default {
       }
 
     },
-
-
-    openModal() {
-      console.log("Opening modal");
-      this.showModal = true;
-    },
-    closeModal() {
-      console.log("Closing modal");
-      this.showModal = false;
-    },
-    createCompany(companyData) {
-      axios.post('http://localhost:3000/company', companyData)
-        .then(response => {
-          console.log(response.data);
-          this.closeModal();
-          axios.get('http://localhost:3000/company')
-            .then(response => {
-              this.companies = response.data;
-              this.displayedCompanies = response.data;
-            })
-            .catch(error => {
+    createCompany() {
+      if (this.companyData.nome && this.companyData.dataPagamento && this.companyData.situacaoPagamento) {
+        axios.post('http://localhost:3000/company', this.companyData)
+          .then(response => {
+            console.log(response.data);
+            this.closeModal();
+            axios.get('http://localhost:3000/company')
+              .then(response => {
+                this.companies = response.data;
+                this.displayedCompanies = response.data;
+              })
+              .catch(error => {
+                console.error(error);
+              });
+          })
+          .catch(error => {
+            if (error.response && error.response.status === 409) {
+              console.error('Company code already exists');
+            } else {
               console.error(error);
-            });
-        })
-        .catch(error => {
-          // Handle errors
-          if (error.response && error.response.status === 409) {
-            console.error('Company code already exists');
-          } else {
-            console.error(error);
-          }
-        });
+            }
+          });
+      } else {
+        alert('Por favor, preencha todos os campos de Nome, Codigo e Situacao de Pagamento');
+      }
     },
 
     deleteCompany(codigo) {
@@ -111,6 +120,21 @@ export default {
         .catch(error => {
           console.error(error);
         });
+    },
+
+    editCompany(codigo) {
+      axios.update(`http://localhost:3000/company/${codigo}`)
+        .then(response => {
+          console.log(response.data);
+          this.displayedCompanies = this.displayedCompanies.filter(company => company.codigo !== codigo);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    showCompany(company) {
+      this.selectedCompany = company;
+      this.showCompanyModal = true;
     }
   }
 }
