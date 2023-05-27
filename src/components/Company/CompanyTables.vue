@@ -18,9 +18,6 @@
           <td scope="row">{{ company.situacaoPagamento }}</td>
           <td scope="row">{{ company.dataPagamento }}</td>
           <td scope="row">{{ company.servico }}</td>
-          <td scope="row">
-            <button class="btn btn-danger" @click="deleteCompany(company.codigo)">Delete</button>
-          </td>
         </tr>
       </tbody>
     </table>
@@ -70,7 +67,6 @@ export default {
   }
 };
 </script>
-
 <style>
 .selected-row {
   background-color: #373737;

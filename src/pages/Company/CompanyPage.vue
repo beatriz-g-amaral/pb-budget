@@ -12,9 +12,9 @@
         <input class="form-control" type="text" v-model="companyData.servico" placeholder="Tipo de Serviço">
       </BaseModal>
     </div>
-    <CompanyTable :companies="displayedCompanies" @delete="deleteCompany" @select="showCompany" />
+    <CompanyTable :companies="displayedCompanies" @select="showCompany" />
     <div>
-      <BaseModal :title="SecondmodalTitle" :is-open="showCompanyModal" @close="closeModal2">
+      <BaseModal :title="SecondmodalTitle" :is-open="showCompanyModal" @close="closeSecondModal">
         <h2>{{ selectedCompany.nome }}</h2>
         <p>Código: {{ selectedCompany.codigo }}</p>
         <p>Situação de Pagamento: {{ selectedCompany.situacaoPagamento }}</p>
@@ -69,7 +69,7 @@ export default {
       });
   },
   methods: {
-    closeModal2() {
+    closeSecondModal() {
       this.showCompanyModal = false;
     },
     closeModal() {
@@ -87,6 +87,11 @@ export default {
         axios.post('http://localhost:3000/company', this.companyData)
           .then(response => {
             console.log(response.data);
+            this.companyData.nome = '';
+            this.companyData.codigo= '';
+            this.companyData.servico= '';
+            this.companyData.situacaoPagamento = '';
+            this.companyData.dataPagamento = '';
             this.closeModal();
             axios.get('http://localhost:3000/company')
               .then(response => {
@@ -109,7 +114,6 @@ export default {
       }
     },
     deleteCompany(codigo) {
-      console.log('here2');
       axios.delete(`http://localhost:3000/company/${codigo}`)
         .then(response => {
           console.log(response.data);

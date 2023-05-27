@@ -1,12 +1,17 @@
 <template>
-  <div>
-    <button class="btn btn-primary" @click="showModal = true">Criar Cliente</button>
-    <BaseModal :title="modalTitle" :is-open="showModal" @open="openModal" @close="closeModal" @submit="createFinance">
-      <input class="form-control" type="text" v-model="localFinaceName" placeholder="Local">
-      <input class="form-control" type="number" v-model="localFinanceValue" placeholder="Valor">
-      <input class="form-control" type="date" v-model="localFinaceDate" placeholder="Data de Vencimento">
+    <button class="btn btn-primary" @click="showModal = true">Criar Conta</button>
+    <div class="finances">
+    <BaseModal :title="modalTitle" :is-open="showModal" @close="closeModal" @delete="deleteFinance" @submit="createFinance">
+      <input class="form-control" type="text" v-model="FinanceData.local" placeholder="Local">
+      <input class="form-control" type="number" v-model="FinanceData.valor" placeholder="Valor">
+      <input class="form-control" type="date" v-model="FinanceData.vencimento" placeholder="Data de Vencimento">
     </BaseModal>
-    <FinancesCard v-model:items="displayedfinances" />
+    <FinancesCard :items="displayedfinances" @select="showFinances" />
+    <BaseModal :title="SecondmodalTitle" :is-open="showItemModal" @close="closeModalFinance">
+      <h2>{{ selectedFinance.local }}</h2>
+      <p>Código: {{ selectedFinance.valor }}</p>
+      <p>Situação de Pagamento: {{ selectedFinance.vencimento }}</p>
+    </BaseModal>
   </div>
 </template>
 
@@ -25,9 +30,16 @@ export default {
   data() {
     return {
       finances: [],
-      modalTitle: 'Criar Cliente',
+      modalTitle: 'Criar Conta',
+      SecondmodalTitle: '',
       displayedfinances: [],
-      selectedCompany: null,
+      FinanceData: {
+        local: '',
+        valor: '',
+        vencimento: ''
+      },
+      selectedFinance: null,
+      showItemModal: false,
       showModal: false
     }
   },
@@ -43,33 +55,57 @@ export default {
   },
   methods: {
     filterfinances(finances) {
-      this.displayedfinances = this.finances.filter(c => c.nome === finances.nome);
+      if (finances){
+      this.displayedfinances = this.finances.filter(c => c.local === finances.local);
+    } else {
+        this.displayedfinances = this.finances;
+      }
     },
-    createFinance(financeData) {
-      axios.post('http://localhost:3000/finances', financeData)
+    createFinance() {
+      if (this.FinanceData.local && this.FinanceData.valor && this.FinanceData.vencimento) {
+        axios.post('http://localhost:3000/finances', this.FinanceData)
+          .then(response => {
+            console.log(response.data);
+            this.closeModal();
+            axios.get('http://localhost:3000/finances')
+              .then(response => {
+                this.finances = response.data;
+                this.FinanceData.local = '';
+                this.FinanceData.valor = '';
+                this.FinanceData.vencimento = '';
+                this.displayedfinances = response.data;
+              })
+              .catch(error => {
+                console.error(error);
+              });
+          })
+          .catch(error => {
+            if (error.response && error.response.status === 409) {
+              console.error('Finance code already exists');
+            } else {
+              console.error(error);
+            }
+          });
+      } else {
+        alert('Por favor, preencha todos os campos de Nome, Valor e  Vencimento');
+      }
+    },
+    deleteFinance(local) {
+      axios.delete(`http://localhost:3000/company/${local}`)
         .then(response => {
           console.log(response.data);
-          this.closeModal();
-          axios.get('http://localhost:3000/finances')
-            .then(response => {
-              this.finances = response.data;
-              this.displayedfinances = response.data;
-            })
-            .catch(error => {
-              console.error(error);
-            });
+          this.displayedCompanies = this.displayedCompanies.filter(company => company.local !== local);
         })
         .catch(error => {
-          if (error.response && error.response.status === 409) {
-            console.error('Finance code already exists');
-          } else {
-            console.error(error);
-          }
+          console.error(error);
         });
     },
-    openModal() {
-      console.log("Opening modal");
-      this.showModal = true;
+    showFinances(item) {
+      this.selectedFinance = item;
+      this.showItemModal = true;
+    },
+    closeModalFinance() {
+      this.showItemModal = false;
     },
     closeModal() {
       console.log("Closing modal");
@@ -79,3 +115,8 @@ export default {
 
 }
 </script>
+<style>
+.finances{
+}
+
+</style>
