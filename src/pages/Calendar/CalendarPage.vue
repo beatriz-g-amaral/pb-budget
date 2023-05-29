@@ -58,7 +58,7 @@ export default {
         nome_evento: '',
         data_evento: '',
         image: null,
-        criado_por: 'padrao',
+        criado_por: '',
       }
     };
   },

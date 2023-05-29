@@ -1,45 +1,53 @@
 <template>
-  <div>
-    <h1>Login</h1>
-    <form @submit.prevent="onSubmit">
-      <div>
-        <label for="email">E-mail:</label>
-        <input id="email" type="email" v-model="email">
-      </div>
-      <div>
-      <label for="password">Password:</label>
-      <input id="password" type="password" v-model="password">
-      </div>
-      <button type="submit">Login</button>
-    </form>
+  <div class="form">
+    <input v-model="username" class="form-control" type="text" placeholder="Username">
+    <input v-model="password" class="form-control" type="password" placeholder="Password">
+    <button class="btn btn-primary" @click="login">Login</button>
+    <button class="btn btn-primary" @click="gotoRegister">Registrar</button>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import router from '@/routes/routes.js';
+import auth from '@/routes/Auth';
 
 export default {
-  name: "LoginPage",
+  name: 'LoginPage',
   data() {
     return {
-      email: '',
+      username: '',
       password: '',
+      user: auth.user
     };
   },
-  methods: {
-    onSubmit() {
-      axios.post('http://localhost:3000/auth/login', {
-        email: this.email,
-        password: this.password,
-      })
-        .then(response => {
-          console.log(response)
-          this.$router.push('/home');
-        })
-        .catch(error => {
-          console.log(error)
-        });
-    },
+  computed: {
+    isAuthenticated() {
+      return auth.isAuthenticated();
+    }
   },
+  methods: {
+    login() {
+      auth.login(this.username, this.password)
+    .then(response => {
+      if (response.success) {
+        this.username = '';
+        this.password = '';
+        alert('Login realizado com sucesso!');
+        router.push('/');
+      } else {
+      alert('Nome de usuário ou senha inválidos');
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
+},
+    logout() {
+      auth.logout();
+    },
+    gotoRegister() {
+      router.push('/register'); 
+    }
+  }
 };
 </script>
